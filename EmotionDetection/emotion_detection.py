@@ -11,42 +11,13 @@ def emotion_detector(text_to_analyse):
 
     # Response
     response = requests.post(url, json = input, headers = headers)
-
-    # Formatted Response
-    formatted_response = json.loads(response.text)
-
-    # Extraction process
-    emotions = {
-        'anger': formatted_response['emotionPredictions'][0]['emotion']['anger'],
-        'disgust': formatted_response['emotionPredictions'][0]['emotion']['disgust'],
-        'fear': formatted_response['emotionPredictions'][0]['emotion']['fear'],
-        'joy': formatted_response['emotionPredictions'][0]['emotion']['joy'],
-        'sadness': formatted_response['emotionPredictions'][0]['emotion']['sadness'],
-    }
-
-    # Score retrieval
-    anger_score = emotions['anger']
-    disgust_score = emotions['disgust']
-    fear_score = emotions['fear']
-    joy_score = emotions['joy']
-    sadness_score = emotions['sadness']
-
-    # What is the most dominant emotion?
-    dominant_emotion = max(emotions, key = emotions.get)
-
-    # In the case of a successful response (status code of 200)
-    if response.status_code == 200:
-        return {
-            'anger': anger_score,
-            'disgust': disgust_score,
-            'fear': fear_score,
-            'joy': joy_score,
-            'sadness': sadness_score,
-            'dominant_emotion': dominant_emotion
-        }
     
-    elif response.status_code == 400:
-        return {
+    # Status code
+    status_code = response.status_code
+
+    # If the status code is 400 - Provided by Coursera Staff Member
+    if status_code == 400:
+        formatted_response = {
             'anger': None,
             'disgust': None,
             'fear': None,
@@ -54,3 +25,11 @@ def emotion_detector(text_to_analyse):
             'sadness': None,
             'dominant_emotion': None
         }
+    
+    else:
+        res = json.loads(response.text)
+        formatted_response = res['emotionPredictions'][0]['emotion']
+        dominant_emotion = max(formatted_response, key = lambda x: formatted_response[x])
+        formatted_response['dominant_emotion'] = dominant_emotion
+
+    return formatted_response
