@@ -1,16 +1,33 @@
-''' Importing Flask, two of its features and EmotionDetection content
-'''
+"""
+Here we import Flask and two of its features.
+We also import the emotion_detector method from its respective file.
+"""
 from flask import Flask, render_template, request
 from EmotionDetection.emotion_detection import emotion_detector
 
-''' 
-Naming the Flask App
-'''
+# This line gives the app its name.
+# Emotion Detection in this case.
+
 app = Flask("Emotion Detection")
 
+'''
+Determining the app's route
+'''
 @app.route("/emotionDetector")
 
+
 def emotion_detector_function():
+
+    '''
+    Get text entered by user.
+
+    Response is then shown after emotion is detected in text.
+
+    Return specific response if no dominant emotion is found.
+
+    Return entered text with emotion-based statistics and dominant
+    emotion if the text is valid.
+    '''
 
     # Text to analyze
     text_to_analyse = request.args.get("textToAnalyze")
@@ -30,13 +47,14 @@ def emotion_detector_function():
 
     return response_text
 
-'''Deciding what the app's route is
-'''
+# This decides what the app's route is.
 @app.route("/")
+
 def render_index_page():
+    '''
+    This function renders the template of the app
+    '''
     return render_template("index.html")
 
-''' Running the app on port 5000
-'''
 if __name__ == "__main__":
     app.run(host = "0.0.0.0", port = 5000)
